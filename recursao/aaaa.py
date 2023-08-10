@@ -1,87 +1,156 @@
-def calcula_derivada_de_ordem(coeficientes, n):
-    if n >= len(coeficientes):
-        return[0]
+def receber_tabuleiro():
+    tabuleiro = []
+    for _ in range(3):
+        entrada = input().split("|")
+        for item in entrada:
+            tabuleiro.append(item)
+    i = 0
+    tabuleiro_dict = {}
+    for item in tabuleiro:
+        tabuleiro_dict[i] = item
+        i+=1
+    return tabuleiro_dict
 
-    if n == 0:
-        return coeficientes
+def space_is_free(n):
+    if tabuleiro[n] == '_':
+        return True
+    return False
+
+def is_board_empty():
+    for v in tabuleiro.values():
+        if v != "_":
+            return False
+    return True
+
+def realizar_jogada(jogador, jogada):
+    if space_is_free(jogada):
+        tabuleiro[jogada] = jogador
+
+def checar_vitoria(jogador):
+    if (tabuleiro[0] == tabuleiro[1] and tabuleiro [0] == tabuleiro[2] and tabuleiro[0] == jogador):
+        return True
+    elif (tabuleiro[3] == tabuleiro[4] and tabuleiro [3] == tabuleiro[5] and tabuleiro[3] == jogador):
+        return True
+    elif (tabuleiro[6] == tabuleiro[7] and tabuleiro [6] == tabuleiro[8] and tabuleiro[6] == jogador):
+        return True
+    elif (tabuleiro[0] == tabuleiro[3] and tabuleiro [0] == tabuleiro[6] and tabuleiro[0] == jogador):
+        return True
+    elif (tabuleiro[1] == tabuleiro[4] and tabuleiro [1] == tabuleiro[7] and tabuleiro[1] == jogador):
+        return True
+    elif (tabuleiro[2] == tabuleiro[5] and tabuleiro [2] == tabuleiro[8] and tabuleiro[2] == jogador):
+        return True
+    elif (tabuleiro[0] == tabuleiro[4] and tabuleiro [0] == tabuleiro[8] and tabuleiro[0] == jogador):
+        return True
+    elif (tabuleiro[2] == tabuleiro[4] and tabuleiro [2] == tabuleiro[6] and tabuleiro[2] == jogador):
+        return True 
+    else:
+        return False
+
+def checar_empate():
+    if '_' not in tabuleiro.values() and checar_vitoria('x') == False and checar_vitoria('o') == False:
+        return True
+    return False
+
+def is_game_over():
+    return checar_vitoria("x") or checar_vitoria("o") or checar_empate()
+
+def jogada_X(tabuleiro):
+    melhor_score = -1000
+    melhor_jogada = 0
+
+    for chave in tabuleiro.keys():
+        if space_is_free(chave):
+            tabuleiro[chave] = 'x'
+            score = minimax(tabuleiro, False)
+            tabuleiro[chave] = '_'
+            if score > melhor_score:
+                melhor_score = score
+                melhor_jogada = chave
+
+    realizar_jogada('x', melhor_jogada)
+    return
+
+def jogada_O(tabuleiro):
+    melhor_score = 1000
+    melhor_jogada = 0
+
+    for chave in tabuleiro.keys():
+        if space_is_free(chave):
+            tabuleiro[chave] = 'o'
+            score = minimax(tabuleiro, True)
+            tabuleiro[chave] = '_'
+            if score < melhor_score:
+                melhor_score = score
+                melhor_jogada = chave
+
+    realizar_jogada('o', melhor_jogada)
+    return
     
-    derivada_coeficientes = []
-    for i in range(1, len(coeficientes)):
-        derivada_coeficientes.append(i * coeficientes[i])
-    
-    return calcula_derivada_de_ordem(derivada_coeficientes, n - 1)
+def minimax(tabuleiro, is_maximizing):
 
-def transforma_para_FPB(coeficientes):
-    if all(item == 0 for item in coeficientes) or coeficientes == []:
-        return "0"
+    if checar_vitoria('x'):
+        return 100
+    elif checar_vitoria('o'):
+        return -100
+    elif checar_empate():
+        return 0
 
-    expoente = 0
-    polinomio = ""
-    for coeficiente in coeficientes:
-        if coeficiente > 0:
-            if coeficiente != 1:
-                if expoente == 0:
-                    polinomio += f"{coeficiente}"
-                elif expoente == 1:
-                    if polinomio != "":
-                        polinomio += f"+{coeficiente}x"
-                    else:
-                        polinomio += f"{coeficiente}x"
-                else:
-                    if polinomio != "":
-                        polinomio += f"+{coeficiente}x^{expoente}"
-                    else:
-                        polinomio += f"{coeficiente}x^{expoente}"
-            else:
-                if expoente == 0:
-                    polinomio += f"{coeficiente}"
-                elif expoente == 1:
-                    if polinomio != "":
-                        polinomio += f"+x"
-                    else:
-                        polinomio += f"x"
-                else:
-                    if polinomio != "":
-                        polinomio += f"+x^{expoente}"
-                    else:
-                        polinomio += f"x^{expoente}"
-        elif coeficiente < 0:
-            if coeficiente != -1:
-                if expoente == 0:
-                    polinomio += f"{coeficiente}"
-                elif expoente == 1:
-                    polinomio += f"{coeficiente}x"
-                else:
-                    polinomio += f"{coeficiente}x^{expoente}"
-            else:
-                if expoente == 0:
-                    polinomio += f"{coeficiente}"
-                elif expoente == 1:
-                    polinomio += f"-x"
-                else:
-                    polinomio += f"-x^{expoente}"
-        expoente += 1
-    return polinomio
+    if is_maximizing:
+        melhor_score = -1000
 
+        for chave in tabuleiro.keys():
+            if space_is_free(chave):
+                tabuleiro[chave] = 'x'
+                score = minimax(tabuleiro, False)
+                tabuleiro[chave] = '_'
+                if score > melhor_score:
+                    melhor_score = score
         
+        return melhor_score
+    else:
+        melhor_score = 800
 
-# Caso 1: Coeficientes vazios
-print(transforma_para_FPB([]))  # Saída esperada: "0"
+        for chave in tabuleiro.keys():
+            if space_is_free(chave):
+                tabuleiro[chave] = 'o'
+                score = minimax(tabuleiro, True)
+                tabuleiro[chave] = '_'
+                if score < melhor_score:
+                    melhor_score = score
+        
+        return melhor_score
 
-# Caso 2: Coeficientes contendo apenas zeros
-print(transforma_para_FPB([0, 0, 0]))  # Saída esperada: "0"
+def print_tabuleiro():
+    print(f'{tabuleiro[0]} | {tabuleiro[1]} | {tabuleiro[2]}')
+    print(f'--+---+--')
+    print(f'{tabuleiro[3]} | {tabuleiro[4]} | {tabuleiro[5]}')
+    print(f'--+---+--')
+    print(f'{tabuleiro[6]} | {tabuleiro[7]} | {tabuleiro[8]}')
+    print(f'--+---+--')
+    print('---------------------------------------------')
 
-# Caso 3: Coeficientes [1, 0, -3, 0, 2]
-print(transforma_para_FPB([1, 0, -3, 0, 2]))  # Saída esperada: "x^4-3x^2+2"
+tabuleiro = receber_tabuleiro()
 
-# Caso 4: Coeficientes [2, -1, 0, 1]
-print(transforma_para_FPB([2, -1, 0, 1]))  # Saída esperada: "2x^3-x^2+x"
+ganhou = [False, False, False]
 
-# Caso 5: Coeficientes [-1, -1, -1, -1]
-print(transforma_para_FPB([-1, -1, -1, -1]))  # Saída esperada: "-x^3-x^2-x"
+while not is_game_over():
+    if is_board_empty():
+        realizar_jogada("x", 0)
+    else:
+        jogada_X(tabuleiro)
+    print_tabuleiro()
+    if not is_game_over():
+        jogada_O(tabuleiro)
+        print_tabuleiro()
 
-# Caso 6: Coeficientes [0, 2, 0, -4, 5]
-print(transforma_para_FPB([0, 2, 0, -4, 5]))  # Saída esperada: "2x^3-4x^2+5"
+if is_game_over():
+    ganhou[0] = checar_vitoria("x")
+    ganhou[1] = checar_vitoria("o")
+    ganhou[2] = checar_empate()
 
-# Caso 7: Coeficientes [1, 2, 3, 4, 5]
-print(transforma_para_FPB([1, 2, 3, 4, 5]))  # Saída esperada: "x^4+2x^3+3x^2+4x+5"
+if ganhou[0]:
+    print("As previsões indicam que o resultado é vitória do x. Aperte o botão correspondente")
+elif ganhou[1]:
+    print("As previsões indicam que o resultado é vitória do o. Aperte o botão correspondente")
+elif ganhou[2]:
+    print("As previsões indicam que o resultado é empate. Aperte o botão correspondente")    

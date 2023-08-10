@@ -16,6 +16,12 @@ def space_is_free(n):
         return True
     return False
 
+def is_board_empty():
+    for v in tabuleiro.values():
+        if v != "_":
+            return False
+    return True
+
 def realizar_jogada(jogador, jogada):
     if space_is_free(jogada):
         tabuleiro[jogada] = jogador
@@ -45,13 +51,15 @@ def checar_empate():
         return True
     return False
 
+def is_game_over():
+    return checar_vitoria("x") or checar_vitoria("o") or checar_empate()
 
-def jogada_X():
+def jogada_X(tabuleiro):
     melhor_score = -1000
     melhor_jogada = 0
 
     for chave in tabuleiro.keys():
-        if tabuleiro[chave] == '_':
+        if space_is_free(chave):
             tabuleiro[chave] = 'x'
             score = minimax(tabuleiro, False)
             tabuleiro[chave] = '_'
@@ -62,12 +70,12 @@ def jogada_X():
     realizar_jogada('x', melhor_jogada)
     return
 
-def jogada_O():
+def jogada_O(tabuleiro):
     melhor_score = 1000
     melhor_jogada = 0
 
     for chave in tabuleiro.keys():
-        if tabuleiro[chave] == '_':
+        if space_is_free(chave):
             tabuleiro[chave] = 'o'
             score = minimax(tabuleiro, True)
             tabuleiro[chave] = '_'
@@ -91,7 +99,7 @@ def minimax(tabuleiro, is_maximizing):
         melhor_score = -1000
 
         for chave in tabuleiro.keys():
-            if tabuleiro[chave] == '_':
+            if space_is_free(chave):
                 tabuleiro[chave] = 'x'
                 score = minimax(tabuleiro, False)
                 tabuleiro[chave] = '_'
@@ -100,10 +108,10 @@ def minimax(tabuleiro, is_maximizing):
         
         return melhor_score
     else:
-        melhor_score = 1000
+        melhor_score = 800
 
         for chave in tabuleiro.keys():
-            if tabuleiro[chave] == '_':
+            if space_is_free(chave):
                 tabuleiro[chave] = 'o'
                 score = minimax(tabuleiro, True)
                 tabuleiro[chave] = '_'
@@ -123,10 +131,26 @@ def print_tabuleiro():
 
 tabuleiro = receber_tabuleiro()
 
-while '_' in tabuleiro.values():
-    jogada_X()
+ganhou = [False, False, False]
+
+while not is_game_over():
+    if is_board_empty():
+        realizar_jogada("x", 0)
+    else:
+        jogada_X(tabuleiro)
     print_tabuleiro()
-    if '_' in tabuleiro.values():
-        jogada_O()
+    if not is_game_over():
+        jogada_O(tabuleiro)
         print_tabuleiro()
-    
+
+if is_game_over():
+    ganhou[0] = checar_vitoria("x")
+    ganhou[1] = checar_vitoria("o")
+    ganhou[2] = checar_empate()
+
+if ganhou[0]:
+    print("As previsões indicam que o resultado é vitória do x. Aperte o botão correspondente")
+elif ganhou[1]:
+    print("As previsões indicam que o resultado é vitória do o. Aperte o botão correspondente")
+elif ganhou[2]:
+    print("As previsões indicam que o resultado é empate. Aperte o botão correspondente")    
