@@ -24,7 +24,8 @@ n = int(input())
 dicionario = receber_inputs(n)
 mes_procurado = int(input())
 
-chaves = procurar_fake_nattys(dicionario, mes_procurado).sort()
+chaves = procurar_fake_nattys(dicionario, mes_procurado)
+chaves.sort()
 
 if len(chaves) != 0:
     print("Os fake nattys do mês são:")
