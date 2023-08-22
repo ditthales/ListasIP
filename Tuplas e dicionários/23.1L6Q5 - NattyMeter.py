@@ -50,8 +50,8 @@ def suspeito_eh_natural(nome):
 
 def porcentagem_de_naturais():
     #comentar isso aqui caso sejam apenas os julgados até agora!
-    for nome in cadastro_de_suspeitos.keys():
-        cadastro_de_suspeitos[nome]["natural"] = suspeito_eh_natural(nome)
+    # for nome in cadastro_de_suspeitos.keys():
+    #     cadastro_de_suspeitos[nome]["natural"] = suspeito_eh_natural(nome)
     qtd_fake_natty = 0
     for nome in cadastro_de_suspeitos.keys():
         if "natural" in cadastro_de_suspeitos[nome]:
@@ -59,7 +59,7 @@ def porcentagem_de_naturais():
                 qtd_fake_natty += 1
 
     porcentagem = qtd_fake_natty / len(cadastro_de_suspeitos) * 100
-    porcentagem = int(porcentagem)
+    porcentagem = round(porcentagem)
     return porcentagem
 
 def desmembrar_caracteristicas(string):
@@ -94,6 +94,7 @@ def desmembrar_caracteristicas(string):
                 coisas_a_adicionar["suor"] = False
             else:
                 coisas_a_adicionar["suor"] = True
+        
     return lista[0], coisas_a_adicionar
 
     

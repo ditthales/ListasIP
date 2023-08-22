@@ -14,7 +14,7 @@ trigramas = {}
 
 while entrada != "END_OF_FILE":
     entrada = input()
-    arquivo.append(entrada)
+    arquivo.append(entrada.lower())
 
 for i in range(len(arquivo)):
     trigramas[i] = criar_trigramas(arquivo[i])
@@ -34,17 +34,21 @@ for i in range(len(buscas)):
     linhas_a_buscar.append([])
 linhas_a_buscar.pop()
 
-print(linhas_a_buscar)
-
 achados = []
 
 for i in range(len(buscas)):
     if len(linhas_a_buscar[i]) != 0:
+        achou = False
         for j in range(len(linhas_a_buscar[i])):
             if buscas[i] in arquivo[linhas_a_buscar[i][j]]:
-                achados.append(linhas_a_buscar[j])
+                achados.append(linhas_a_buscar[i][j])
+                achou = True
+                break
+        if not achou:
+            achados.append(-1)
+            achou = False
     else:
-        achados.append[-1]
+        achados.append(-1)
 
-print(achados)
-print(buscas)
+for item in achados:
+    print(item)
